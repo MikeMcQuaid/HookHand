@@ -1,0 +1,8 @@
+/.bundle/
+/.env
+/bin/
+/scripts/
+/test/coverage/
+/test/scripts/
+/test/tmp/
+/vendor/
