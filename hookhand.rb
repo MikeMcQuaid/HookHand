@@ -96,6 +96,9 @@ class Hookhand
 
       env = env_from_parameters request_parameters
       env["HOOKHAND"] = "1"
+      if (event = request.env["HTTP_X_GITHUB_EVENT"])
+        env["HOOKHAND_X_GITHUB_EVENT"] = event
+      end
 
       body = <<-EOS
 Running script '#{script_file}' with parameters #{path_parameters}:

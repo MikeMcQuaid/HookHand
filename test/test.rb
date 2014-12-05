@@ -73,6 +73,7 @@ class HookHandTest < MiniTest::Unit::TestCase
   end
 
   def test_post_json_script
+    header "X-GitHub-Event", "ping"
     post "/test/1/2/3/",
       { testing_again: "b", more_test: [[[1, 2], 3], 4] }.to_json,
       { "CONTENT_TYPE" => "application/json" }
