@@ -15,7 +15,7 @@ class Hookhand
         hostname = URI(repo).host
         username = ENV["SCRIPTS_GIT_USERNAME"]
         password = ENV["SCRIPTS_GIT_PASSWORD"]
-        netrc_line = "machine #{hostname} login #{username} password #{password}"
+        netrc_line = "machine #{hostname} login #{username} password #{password}\n"
 
         netrc_path = Pathname.new "#{ENV["HOME"]}/.netrc"
         if netrc_path.exist?
