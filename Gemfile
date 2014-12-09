@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "2.1.2"
+ruby IO.read(File.expand_path("#{File.dirname(__FILE__)}/.ruby-version")).strip
 
 gem "rack"
 gem "json"
