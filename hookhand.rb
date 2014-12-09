@@ -3,8 +3,17 @@ require "rack/response"
 require "json"
 require "awesome_print" if ENV["RACK_ENV"] == "development"
 
+# Let's timeout by default after 25s as e.g. Heroku times out after 30s.
+DEFAULT_REQUEST_TIMEOUT = 25
+
 class Hookhand
   def initialize
+    @request_timeout_seconds = if ENV["REQUEST_TIMEOUT"]
+      ENV["REQUEST_TIMEOUT"].to_i
+    else
+      DEFAULT_REQUEST_TIMEOUT
+    end
+
     scripts = ENV["RACK_ENV"] == "test" ? "test/scripts" : "scripts"
     @scripts_dir = Pathname.new File.expand_path "#{__FILE__}/../#{scripts}/"
 
@@ -66,6 +75,7 @@ class Hookhand
   end
 
   def call environment
+    start_time = Time.now.to_i
     request = Rack::Request.new environment
     script_file, *path_parameters = *request.path.split("/").reject(&:empty?)
 
@@ -108,13 +118,31 @@ EOS
       # could allow running commands we don't want to allow. Instead, use the
       # `script_path` obtained above as the command name and pass the remaining
       # parameters as an array.
-      script_output = Bundler.with_clean_env do
+      script_process = Bundler.with_clean_env do
         ENV["PATH"] = "#{ENV["PATH"]}:#{@scripts_dir}"
-        IO.popen env, [script_path.to_s, *path_parameters], err: [:child, :out]
+        IO.popen env, [script_path.to_s, *path_parameters],
+                           err: [:child, :out]
       end
-      body += script_output.read
-      script_output.close
+
+      timeout = @request_timeout_seconds - (start_time - Time.now.to_i)
+
+      begin
+        raise Timeout::Error unless timeout > 0
+        Timeout::timeout(timeout) do
+          body += script_process.read
+        end
+      rescue Timeout::Error
+        body += "---\nTimed out after #{@request_timeout_seconds} seconds!\n"
+      end
+
+      # Give the script a second to shut down gracefully then kill it hard.
+      Process.kill "INT", script_process.pid
+      sleep 1
+      Process.kill "TERM", script_process.pid
+
+      script_process.close
       script_success = $?.success?
+
       script_status_message = if script_success
         "successfully :D"
       else

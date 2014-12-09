@@ -40,6 +40,7 @@ class HookHandTest < MiniTest::Unit::TestCase
     ENV["SCRIPTS_GIT_USERNAME"] = "test"
     ENV["SCRIPTS_GIT_REPO"] = \
       "https://github.com/mikemcquaid/HookHandTestScripts"
+    ENV.delete "REQUEST_TIMEOUT"
   end
 
   def test_welcome
@@ -63,6 +64,12 @@ class HookHandTest < MiniTest::Unit::TestCase
   def test_failed_script
     get "/false/"
     assert last_response.server_error?
+  end
+
+  def test_timeout_script
+    ENV["REQUEST_TIMEOUT"] = "1"
+    get "/sleep/"
+    assert last_response.server_error?, last_response.body
   end
 
   def test_post_form_script
