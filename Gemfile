@@ -7,7 +7,7 @@ gem "json"
 gem "unicorn"
 
 group :development do
-  gem "guard-rack"
+  gem "guard-process"
   gem "awesome_print"
   gem "travis-lint"
 end
