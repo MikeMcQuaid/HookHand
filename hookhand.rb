@@ -17,41 +17,45 @@ class Hookhand
     scripts = ENV["RACK_ENV"] == "test" ? "test/scripts" : "scripts"
     @scripts_dir = Pathname.new File.expand_path "#{__FILE__}/../#{scripts}/"
 
-    unless ENV["SCRIPTS_GIT_REPO"].to_s.empty?
-      repo = ENV["SCRIPTS_GIT_REPO"]
+    # Only run Git operations on the first Unicorn worker.
+    # This is a filthy hack to prevent clobbering the same scripts Git
+    # directory when we have multiple Unicorn workers.
+    return if /unicorn worker\[([1-9])\d*\]/ =~ $0
 
-      unless ENV["SCRIPTS_GIT_USERNAME"].to_s.empty?
-        hostname = URI(repo).host
-        username = ENV["SCRIPTS_GIT_USERNAME"]
-        password = ENV["SCRIPTS_GIT_PASSWORD"]
-        netrc_line = "machine #{hostname} login #{username} password #{password}\n"
+    repo = ENV["SCRIPTS_GIT_REPO"]
+    return if repo.to_s.empty?
 
-        netrc_path = Pathname.new "#{ENV["HOME"]}/.netrc"
-        if netrc_path.exist?
-          netrc = netrc_path.read
-          unless netrc.include?(netrc_line)
-            File.open(netrc_path, "a") {|f| f.write netrc_line }
-          end
+    unless ENV["SCRIPTS_GIT_USERNAME"].to_s.empty?
+      hostname = URI(repo).host
+      username = ENV["SCRIPTS_GIT_USERNAME"]
+      password = ENV["SCRIPTS_GIT_PASSWORD"]
+      netrc_line = "machine #{hostname} login #{username} password #{password}\n"
+
+      netrc_path = Pathname.new "#{ENV["HOME"]}/.netrc"
+      if netrc_path.exist?
+        netrc = netrc_path.read
+        unless netrc.include?(netrc_line)
+          File.open(netrc_path, "a") {|f| f.write netrc_line }
+        end
+      else
+        netrc_path.write netrc_line
+      end
+    end
+
+    if @scripts_dir.exist?
+      Dir.chdir @scripts_dir do
+        if repo == `git config --local remote.origin.url`.chomp
+          system "git", "pull", "--quiet"
+          raise "Updating #{repo} failed!" unless $?.success?
         else
-          netrc_path.write netrc_line
+          FileUtils.rm_rf @scripts_dir
         end
       end
+    end
 
-      if @scripts_dir.exist?
-        Dir.chdir @scripts_dir do
-          if repo == `git config --local remote.origin.url`.chomp
-            system "git", "pull", "--quiet"
-            raise "Updating #{repo} failed!" unless $?.success?
-          else
-            FileUtils.rm_rf @scripts_dir
-          end
-        end
-      end
-
-      unless @scripts_dir.exist?
-        system "git", "clone", repo, @scripts_dir.to_s, err: "/dev/null"
-        raise "Cloning #{repo} failed!" unless $?.success?
-      end
+    unless @scripts_dir.exist?
+      system "git", "clone", repo, @scripts_dir.to_s, err: "/dev/null"
+      raise "Cloning #{repo} failed!" unless $?.success?
     end
   end
 
