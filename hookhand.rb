@@ -83,6 +83,8 @@ class Hookhand
     request = Rack::Request.new environment
     script_file, *path_parameters = *request.path.split("/").reject(&:empty?)
 
+    raise "Raised test exception!" if script_file == "_raise_test_exception"
+
     # Rather than just using `script_file` instead look through the `./scripts/`
     # directory and find the first executable file that is named the same. This
     # whitelist approach will prevent attempts to run scripts outside the

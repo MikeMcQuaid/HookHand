@@ -43,6 +43,10 @@ class HookHandTest < MiniTest::Unit::TestCase
     ENV.delete "REQUEST_TIMEOUT"
   end
 
+  def test_raise_exception
+    assert_raises(RuntimeError) { get "/_raise_test_exception" }
+  end
+
   def test_welcome
     get "/"
     assert last_response.ok?
