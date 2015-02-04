@@ -158,7 +158,11 @@ EOS
 ---
 Ran script '#{script_file}' #{script_status_message}
 EOS
-      status_code = script_success ? 200 : 500
+      status_code = if script_success
+        200
+      else
+        500
+      end
     elsif script_file
       body = "No script named '#{script_file}' found!"
       status_code = 404
