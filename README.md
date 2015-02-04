@@ -19,7 +19,7 @@ SCRIPTS_GIT_REPO="..." foreman start
 
 ## Example
 1. Run `SCRIPTS_GIT_REPO=https://github.com/mikemcquaid/HookHandTestScripts foreman start` to start the application and download the `HookHandTestScripts` repository.
-2. Access http://localhost:5000/test/a/b/c and see that it is running the [test script](https://github.com/mikemcquaid/HookHandTestScripts/blob/master/test) and passing parameters `a b c`.
+2. Access [http://localhost:5000/test/a/b/c](http://localhost:5000/test/a/b/c) and see that it is running the [test script](https://github.com/mikemcquaid/HookHandTestScripts/blob/master/test) and passing parameters `a b c`.
 3. Deploy to a server and set up a webhook with `http://yourserver/test/a/b/c` as the Payload URL and see that the webhook variables are exported in the format e.g. `HOOKHAND_REPOSITORY_CREATED_AT=1412962305`. If it's a private repository set the username and password with the `SCRIPTS_GIT_USERNAME` and `SCRIPTS_GIT_PASSWORD` environment variables (or set `SCRIPTS_GIT_USERNAME` to a personal access token).
 
 ## Configuration Environment Variables
