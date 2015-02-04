@@ -1,26 +1,28 @@
 ENV["RACK_ENV"] = "test"
 
+HOOKHAND_ROOT = File.expand_path "#{File.dirname(__FILE__)}/../"
+
 if ENV["COVERAGE"]
   require "simplecov"
   SimpleCov.start do
     project_name "HookHand"
     add_filter "/test/"
     add_filter "/vendor/"
-    coverage_dir "test/coverage"
+    coverage_dir "#{HOOKHAND_ROOT}/test/coverage"
     minimum_coverage 100
   end
 end
 
 require "minitest/autorun"
 require "rack/test"
-require File.expand_path("#{File.dirname(__FILE__)}/../hookhand.rb")
+require "#{HOOKHAND_ROOT}/hookhand.rb"
 
 def home
-  File.expand_path("#{File.dirname(__FILE__)}/tmp")
+  File.expand_path "#{HOOKHAND_ROOT}/test/tmp"
 end
 
 def scripts
-  File.expand_path("#{File.dirname(__FILE__)}/scripts/")
+  File.expand_path "#{HOOKHAND_ROOT}/test/scripts"
 end
 
 cleanup = Proc.new { FileUtils.rm_rf home; FileUtils.rm_rf scripts }

@@ -15,7 +15,7 @@ class Hookhand
     end
 
     scripts = ENV["RACK_ENV"] == "test" ? "test/scripts" : "scripts"
-    @scripts_dir = Pathname.new File.expand_path "#{__FILE__}/../#{scripts}/"
+    @scripts_dir = Pathname.new File.expand_path "#{File.dirname(__FILE__)}/scripts/"
 
     # Only run Git operations on the first Unicorn worker.
     # This is a filthy hack to prevent clobbering the same scripts Git
