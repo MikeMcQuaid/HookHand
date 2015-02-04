@@ -5,6 +5,7 @@ require "awesome_print" if ENV["RACK_ENV"] == "development"
 
 # Let's timeout by default after 25s as e.g. Heroku times out after 30s.
 DEFAULT_REQUEST_TIMEOUT = 25
+DEFAULT_SCRIPTS_DIR = "./scripts/"
 
 class Hookhand
   def initialize
@@ -14,8 +15,11 @@ class Hookhand
       DEFAULT_REQUEST_TIMEOUT
     end
 
-    scripts = ENV["RACK_ENV"] == "test" ? "test/scripts" : "scripts"
-    @scripts_dir = Pathname.new File.expand_path "#{File.dirname(__FILE__)}/scripts/"
+    @scripts_dir = if ENV["SCRIPTS_DIR"]
+      Pathname.new ENV["SCRIPTS_DIR"].to_s
+    else
+      Pathname.new DEFAULT_SCRIPTS_DIR
+    end
 
     # Only run Git operations on the first Unicorn worker.
     # This is a filthy hack to prevent clobbering the same scripts Git
@@ -23,7 +27,13 @@ class Hookhand
     return if /unicorn worker\[([1-9])\d*\]/ =~ $0
 
     repo = ENV["SCRIPTS_GIT_REPO"]
-    return if repo.to_s.empty?
+    if repo.to_s.empty?
+      if @scripts_dir.exist?
+        return
+      else
+        raise "#{@scripts_dir} does not exist and no SCRIPTS_GIT_REPO set!"
+      end
+    end
 
     unless ENV["SCRIPTS_GIT_USERNAME"].to_s.empty?
       hostname = URI(repo).host

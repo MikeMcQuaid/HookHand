@@ -2,7 +2,7 @@
 HookHand is a small web application which runs scripts from webhooks.
 
 ## Features
-- Runs scripts from a cloned Git repository.
+- Runs scripts from a cloned Git repository or local directory.
 - Runs script and passes parameters based on URL path.
 - Webhook metadata can be passed through POSTed JSON or form data and is exposed to the script as environment variables.
 - Script output is returned as plain text.
@@ -24,6 +24,7 @@ SCRIPTS_GIT_REPO="..." foreman start
 
 ## Configuration Environment Variables
 - `REQUEST_TIMEOUT`: the time a script is allowed to run for before being killed. Defaults to 25 seconds.
+- `SCRIPTS_DIR`: a path to the directory either storing the scripts or a destination to clone `SCRIPTS_GIT_REPO` into. Defaults to `./scripts/` relative to the working directory.
 - `SCRIPTS_GIT_REPO`: the Git repository to clone for scripts.
 - `SCRIPTS_GIT_USERNAME`: the HTTP username for accessing the Git repository. Alternatively, a GitHub personal access token.
 - `SCRIPTS_GIT_PASSWORD`: the HTTP password for accessing the Git repository.

@@ -39,6 +39,7 @@ class HookHandTest < MiniTest::Unit::TestCase
   def setup
     FileUtils.mkdir_p home
     ENV["HOME"] = home
+    ENV["SCRIPTS_DIR"] = scripts
     ENV["SCRIPTS_GIT_USERNAME"] = "test"
     ENV["SCRIPTS_GIT_REPO"] = \
       "https://github.com/mikemcquaid/HookHandTestScripts"
@@ -53,6 +54,27 @@ class HookHandTest < MiniTest::Unit::TestCase
     get "/"
     assert last_response.ok?
     assert_equal "Welcome to HookHand!", last_response.body
+  end
+
+  def test_default_scripts_dir
+    ENV.delete "SCRIPTS_DIR"
+    get "/"
+    assert last_response.ok?
+  end
+
+  def test_set_existing_scripts_dir
+    ENV.delete "SCRIPTS_GIT_REPO"
+    FileUtils.mkdir_p ENV["SCRIPTS_DIR"]
+    assert File.directory? ENV["SCRIPTS_DIR"]
+    get "/"
+    assert last_response.ok?
+  end
+
+  def test_set_missing_scripts_dir
+    ENV.delete "SCRIPTS_GIT_REPO"
+    ENV["SCRIPTS_DIR"] = "./a/missing/directory"
+    assert !File.directory?(ENV["SCRIPTS_DIR"])
+    assert_raises(RuntimeError) { get "/" }
   end
 
   def test_invalid_scripts_repo
