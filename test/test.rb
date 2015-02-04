@@ -1,26 +1,28 @@
 ENV["RACK_ENV"] = "test"
 
+HOOKHAND_ROOT = File.expand_path "#{File.dirname(__FILE__)}/../"
+
 if ENV["COVERAGE"]
   require "simplecov"
   SimpleCov.start do
     project_name "HookHand"
     add_filter "/test/"
     add_filter "/vendor/"
-    coverage_dir "test/coverage"
+    coverage_dir "#{HOOKHAND_ROOT}/test/coverage"
     minimum_coverage 100
   end
 end
 
 require "minitest/autorun"
 require "rack/test"
-require File.expand_path("#{File.dirname(__FILE__)}/../hookhand.rb")
+require "#{HOOKHAND_ROOT}/hookhand.rb"
 
 def home
-  File.expand_path("#{File.dirname(__FILE__)}/tmp")
+  File.expand_path "#{HOOKHAND_ROOT}/test/tmp"
 end
 
 def scripts
-  File.expand_path("#{File.dirname(__FILE__)}/scripts/")
+  File.expand_path "#{HOOKHAND_ROOT}/test/scripts"
 end
 
 cleanup = Proc.new { FileUtils.rm_rf home; FileUtils.rm_rf scripts }
@@ -37,6 +39,7 @@ class HookHandTest < MiniTest::Unit::TestCase
   def setup
     FileUtils.mkdir_p home
     ENV["HOME"] = home
+    ENV["SCRIPTS_DIR"] = scripts
     ENV["SCRIPTS_GIT_USERNAME"] = "test"
     ENV["SCRIPTS_GIT_REPO"] = \
       "https://github.com/mikemcquaid/HookHandTestScripts"
@@ -51,6 +54,27 @@ class HookHandTest < MiniTest::Unit::TestCase
     get "/"
     assert last_response.ok?
     assert_equal "Welcome to HookHand!", last_response.body
+  end
+
+  def test_default_scripts_dir
+    ENV.delete "SCRIPTS_DIR"
+    get "/"
+    assert last_response.ok?
+  end
+
+  def test_set_existing_scripts_dir
+    ENV.delete "SCRIPTS_GIT_REPO"
+    FileUtils.mkdir_p ENV["SCRIPTS_DIR"]
+    assert File.directory? ENV["SCRIPTS_DIR"]
+    get "/"
+    assert last_response.ok?
+  end
+
+  def test_set_missing_scripts_dir
+    ENV.delete "SCRIPTS_GIT_REPO"
+    ENV["SCRIPTS_DIR"] = "./a/missing/directory"
+    assert !File.directory?(ENV["SCRIPTS_DIR"])
+    assert_raises(RuntimeError) { get "/" }
   end
 
   def test_invalid_scripts_repo
