@@ -1,0 +1,35 @@
+{
+  "name": "HookHand",
+  "description": "A small web application which runs scripts from webhooks.",
+  "website": "https://github.com/mikemcquaid/HookHand",
+  "repository": "https://github.com/mikemcquaid/HookHand",
+  "keywords": ["ruby", "webhooks", "bash", "github"],
+  "success_url": "/",
+  "env": {
+    "REQUEST_TIMEOUT": {
+      "description": "The number of seconds a script is allowed to run for before being killed. Defaults to 25.",
+      "required": false
+    },
+    "SCRIPTS_DIR": {
+      "description": "A path to the directory either storing the scripts or a destination to clone `SCRIPTS_GIT_REPO` into. Defaults to `./scripts/` relative to the working directory.",
+      "required": false
+    },
+    "SCRIPTS_GIT_REPO": {
+      "description": "The Git repository to clone for scripts.",
+      "value": "https://github.com/mikemcquaid/HookHandTestScripts",
+      "required": false
+    },
+    "SCRIPTS_GIT_USERNAME": {
+      "description": "The HTTP username for accessing a private Git repository. Alternatively, a GitHub personal access token.",
+      "required": false
+    },
+    "SCRIPTS_GIT_PASSWORD": {
+      "description": "The HTTP password for accessing a private Git repository",
+      "required": false
+    },
+    "WEB_CONCURRENCY": {
+      "description": "The number of Unicorn (web server) processes to run.",
+      "required": false
+    }
+  }
+}
