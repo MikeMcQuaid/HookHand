@@ -17,15 +17,11 @@ require "minitest/autorun"
 require "rack/test"
 require "#{HOOKHAND_ROOT}/hookhand.rb"
 
-def home
-  File.expand_path "#{HOOKHAND_ROOT}/test/tmp"
-end
-
 def scripts
   File.expand_path "#{HOOKHAND_ROOT}/test/scripts"
 end
 
-cleanup = Proc.new { FileUtils.rm_rf home; FileUtils.rm_rf scripts }
+cleanup = Proc.new { FileUtils.rm_rf scripts }
 cleanup.call
 MiniTest::Unit.after_tests &cleanup
 
@@ -37,8 +33,6 @@ class HookHandTest < MiniTest::Unit::TestCase
   end
 
   def setup
-    FileUtils.mkdir_p home
-    ENV["HOME"] = home
     ENV["SCRIPTS_DIR"] = scripts
     ENV["SCRIPTS_GIT_USERNAME"] = "test"
     ENV["SCRIPTS_GIT_REPO"] = \
