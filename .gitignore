@@ -1,5 +1,6 @@
 /.bundle/
 /.env
+/.git-credentials
 /bin/
 /scripts/
 /test/coverage/

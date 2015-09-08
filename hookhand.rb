@@ -35,25 +35,23 @@ class Hookhand
       end
     end
 
+    git_config_key, git_config_value = nil
     unless ENV["SCRIPTS_GIT_USERNAME"].to_s.empty?
-      hostname = URI(repo).host
       username = ENV["SCRIPTS_GIT_USERNAME"]
       password = ENV["SCRIPTS_GIT_PASSWORD"]
-      netrc_line = "machine #{hostname} login #{username} password #{password}\n"
-
-      netrc_path = Pathname.new "#{ENV["HOME"]}/.netrc"
-      if netrc_path.exist?
-        netrc = netrc_path.read
-        unless netrc.include?(netrc_line)
-          File.open(netrc_path, "a") {|f| f.write netrc_line }
-        end
-      else
-        netrc_path.write netrc_line
-      end
+      hostname = URI(repo).host
+      git_credentials = "https://#{username}:#{password}@#{hostname}\n"
+      git_credentials_path = Pathname.new(".git-credentials").expand_path
+      git_credentials_path.write git_credentials
+      git_config_key = "credential.helper"
+      git_config_value = "store --file=#{git_credentials_path}"
     end
 
     if @scripts_dir.exist?
       Dir.chdir @scripts_dir do
+        if git_config_key && git_config_value
+          system "git", "config", "--local", git_config_key, git_config_value
+        end
         if repo == `git config --local remote.origin.url`.chomp
           system "git", "pull", "--quiet"
           raise "Updating #{repo} failed!" unless $?.success?
@@ -64,7 +62,11 @@ class Hookhand
     end
 
     unless @scripts_dir.exist?
-      system "git", "clone", repo, @scripts_dir.to_s, err: "/dev/null"
+      git_config = []
+      if git_config_key && git_config_value
+        git_config << "--config" << "#{git_config_key}=#{git_config_value}"
+      end
+      system "git", "clone", *git_config, repo, @scripts_dir.to_s, err: "/dev/null"
       raise "Cloning #{repo} failed!" unless $?.success?
     end
   end
