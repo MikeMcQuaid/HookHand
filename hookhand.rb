@@ -94,6 +94,7 @@ class Hookhand
     start_time = Time.now.to_i
     request = Rack::Request.new environment
     script_file, *path_parameters = *request.path.split("/").reject(&:empty?)
+    foreground = !request.params["background"]
 
     raise "Raised test exception!" if script_file == "_raise_test_exception"
 
@@ -142,39 +143,55 @@ EOS
                            err: [:child, :out]
       end
 
-      timeout = @request_timeout_seconds - (start_time - Time.now.to_i)
+      timeout = if foreground
+        @request_timeout_seconds - (start_time - Time.now.to_i)
+      else
+        # Timeout background jobs after a second to ensure they didn't
+        # fail immediately.
+        1
+      end
 
+      timed_out = false
       begin
         raise Timeout::Error unless timeout > 0
         Timeout::timeout(timeout) do
-          body += script_process.read
+          script_process.each_line {|l| body += l }
         end
       rescue Timeout::Error
-        body += "---\nTimed out after #{@request_timeout_seconds} seconds!\n"
+        timed_out = true
       end
 
-      # Give the script a second to shut down gracefully then kill it hard.
-      Process.kill "INT", script_process.pid
-      sleep 1
-      Process.kill "TERM", script_process.pid
+      if foreground
+        body += "---\nTimed out after #{@request_timeout_seconds} seconds!\n" if timed_out
+        # Give the script a second to shut down gracefully then kill it hard.
+        Process.kill "INT", script_process.pid
+        sleep 1
+        Process.kill "TERM", script_process.pid
+        script_process.close
 
-      script_process.close
-      script_success = $?.success?
+        script_success = $?.success?
+        script_verb = "Ran"
+        script_status_message = if script_success
+          "successfully :D"
+        else
+          "unsuccessfully :("
+        end
 
-      script_status_message = if script_success
-        "successfully :D"
+        status_code = if script_success
+          200
+        else
+          500
+        end
       else
-        "unsuccessfully :("
+        script_verb = "Running"
+        script_status_message = "in the background :o"
+        status_code = 202
       end
+
       body += <<-EOS
 ---
-Ran script '#{script_file}' #{script_status_message}
+#{script_verb} script '#{script_file}' #{script_status_message}
 EOS
-      status_code = if script_success
-        200
-      else
-        500
-      end
     elsif script_file
       body = "No script named '#{script_file}' found!"
       status_code = 404

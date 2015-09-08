@@ -94,6 +94,12 @@ class HookHandTest < MiniTest::Unit::TestCase
     assert last_response.server_error?, last_response.body
   end
 
+  def test_background_script
+    ENV["REQUEST_TIMEOUT"] = "1"
+    get "/sleep/", { background: true }
+    assert_equal last_response.status, 202
+  end
+
   def test_post_form_script
     post "/test/a/b/c/", { testing: :a }
     assert last_response.ok?

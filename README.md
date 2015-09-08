@@ -7,6 +7,7 @@ HookHand is a small web application which runs scripts from webhooks.
 - Webhook metadata can be passed through POSTed JSON or form data and is exposed to the script as environment variables.
 - Script output is returned as plain text.
 - HTTP status code set based on script exit code.
+- Run scripts in the background with `?background=1`.
 
 ## Usage
 To use locally run:
