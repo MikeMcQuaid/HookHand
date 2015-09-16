@@ -20,7 +20,7 @@ SCRIPTS_GIT_REPO="..." foreman start
 
 Alternatively, to deploy to [Heroku](https://www.heroku.com) click:
 
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 ## Example
 1. Run `SCRIPTS_GIT_REPO=https://github.com/mikemcquaid/HookHandTestScripts foreman start` to start the application and download the `HookHandTestScripts` repository.
