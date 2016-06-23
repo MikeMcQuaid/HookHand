@@ -38,7 +38,7 @@ Alternatively, to deploy to [Heroku](https://www.heroku.com) click:
 ## Status
 The above features are implemented. Will fix bugs that come along but want to avoid scope-creep.
 
-[![Build Status](https://travis-ci.org/mikemcquaid/HookHand.svg?branch=master)](https://travis-ci.org/mikemcquaid/HookHand)
+[![Build Status](https://travis-ci.org/MikeMcQuaid/HookHand.svg?branch=master)](https://travis-ci.org/MikeMcQuaid/HookHand)
 
 ## Contact
 [Mike McQuaid](mailto:mike@mikemcquaid.com)
