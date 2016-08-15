@@ -23,9 +23,9 @@ end
 
 cleanup = Proc.new { FileUtils.rm_rf scripts }
 cleanup.call
-MiniTest::Unit.after_tests(&cleanup)
+MiniTest.after_run(&cleanup)
 
-class HookHandTest < MiniTest::Unit::TestCase
+class HookHandTest < Minitest::Test
   include Rack::Test::Methods
 
   def app
