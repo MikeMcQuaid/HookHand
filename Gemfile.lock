@@ -1,23 +1,24 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    awesome_print (1.6.1)
+    awesome_print (1.7.0)
     docile (1.1.5)
-    ffi (1.9.10)
+    ffi (1.9.14)
     guard-compat (1.2.1)
     guard-process (1.2.1)
       guard-compat (~> 1.2, >= 1.2.1)
       spoon (~> 0.0.1)
-    json (1.8.3)
+    json (2.0.2)
     kgio (2.10.0)
-    rack (1.6.4)
+    minitest (5.9.0)
+    rack (2.0.1)
     rack-test (0.6.3)
       rack (>= 1.0)
-    raindrops (0.16.0)
-    rake (11.1.2)
-    simplecov (0.11.2)
+    raindrops (0.17.0)
+    rake (11.2.2)
+    simplecov (0.12.0)
       docile (~> 1.1.0)
-      json (~> 1.8)
+      json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.0)
     spoon (0.0.4)
@@ -35,6 +36,7 @@ DEPENDENCIES
   awesome_print
   guard-process
   json
+  minitest
   rack
   rack-test
   rake
@@ -46,4 +48,4 @@ RUBY VERSION
    ruby 2.1.7p400
 
 BUNDLED WITH
-   1.12.1
+   1.12.5

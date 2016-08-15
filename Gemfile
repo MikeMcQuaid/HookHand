@@ -13,6 +13,7 @@ group :development do
 end
 
 group :test do
+  gem "minitest"
   gem "rake"
   gem "rack-test"
   gem "simplecov"
