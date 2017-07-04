@@ -8,7 +8,6 @@ gem "unicorn"
 
 group :development do
   gem "guard-process"
-  gem "awesome_print"
   gem "travis-lint"
 end
 
