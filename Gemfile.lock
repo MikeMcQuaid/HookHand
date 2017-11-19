@@ -9,7 +9,7 @@ GEM
       spoon (~> 0.0.1)
     json (2.1.0)
     kgio (2.10.0)
-    minitest (5.9.0)
+    minitest (5.10.3)
     rack (2.0.3)
     rack-test (0.6.3)
       rack (>= 1.0)
