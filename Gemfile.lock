@@ -7,7 +7,7 @@ GEM
     guard-process (1.2.1)
       guard-compat (~> 1.2, >= 1.2.1)
       spoon (~> 0.0.1)
-    json (2.0.2)
+    json (2.1.0)
     kgio (2.10.0)
     minitest (5.9.0)
     rack (2.0.1)
