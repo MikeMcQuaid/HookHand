@@ -10,7 +10,7 @@ GEM
     json (2.1.0)
     kgio (2.10.0)
     minitest (5.9.0)
-    rack (2.0.1)
+    rack (2.0.3)
     rack-test (0.6.3)
       rack (>= 1.0)
     raindrops (0.17.0)
