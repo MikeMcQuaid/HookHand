@@ -8,7 +8,7 @@ GEM
       guard-compat (~> 1.2, >= 1.2.1)
       spoon (~> 0.0.1)
     json (2.1.0)
-    kgio (2.11.0)
+    kgio (2.11.1)
     minitest (5.10.3)
     rack (2.0.3)
     rack-test (0.8.2)
@@ -24,7 +24,7 @@ GEM
       ffi
     travis-lint (2.0.0)
       json
-    unicorn (5.3.1)
+    unicorn (5.4.0)
       kgio (~> 2.6)
       raindrops (~> 0.7)
 
