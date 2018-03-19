@@ -15,7 +15,7 @@ GEM
       rack (>= 1.0, < 3)
     raindrops (0.19.0)
     rake (12.3.0)
-    simplecov (0.16.0)
+    simplecov (0.16.1)
       docile (~> 1.1)
       json (>= 1.8, < 3)
       simplecov-html (~> 0.10.0)
